@@ -1,0 +1,166 @@
+CHAPTER#01----->  #READ IMAGES, VIDEOS AND WEBCAM
+
+import cv2            #computerVission
+#print("package imported")
+         
+#img=cv2.imread("Resources/lena.png")
+#cv2.imshow("Output",img)
+#cv2.waitKey(0)
+    #video
+#cap=cv2.VideoCapture("Resources/test_video.mp4")
+#while True:
+ #  success, img=cap.read()
+  # cv2.imshow("Video", img)
+   #if cv2.waitKey(1) & 0xFF==ord('x'):
+    #   break
+    #webcam
+cap=cv2.VideoCapture(0)   #default webcam id
+cap.set(3,640)  #id 3 is width
+cap.set(4,480)     #id 4 is height
+cap.set(10,500)     #id 10 is for brightness
+while True:
+    success, img=cap.read()
+    cv2.imshow("Video", img)
+    if cv2.waitKey(1) & 0xFF==ord('x'):
+        break
+    <------------------------------------------------------------------------------>
+    
+    
+CHAPTER#02----------->#BASIC FUNCTION
+
+import cv2
+import numpy as np
+#BASIC FUNCTION
+
+img = cv2.imread("Resources/lena.png")
+kernal = np.ones((5,5),np.uint8)
+imgGrey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #changes the given image in desired colored forms
+imgBlur = cv2.GaussianBlur(imgGrey,(7,7),0) #image blur by gaussian method in this (7,7) should be the capacity of image which should be blured
+imgCanny = cv2.Canny(img,100,100) #edge detection 100,100(changable) is a threshold values(it means images with certain amount of images)
+imgDilation = cv2.dilate(imgCanny,kernal,iterations=1) #it is used for the edges thickness that edges which are not properly cleared so we increase the thickness as kernal i.e matrix value , tu use matrix numpy is provided and the last paramter is how much thicknesss we want
+imgErosion = cv2.erode(imgDilation,kernal,iterations=1)#it is opposite of dilation it is used for thin the image edges
+cv2.imshow("Gray Image",imgGrey)
+cv2.imshow("Blur Image",imgBlur)
+cv2.imshow("Edge Image",imgCanny)
+cv2.imshow("dilate Image",imgDilation)
+cv2.imshow("Eroded Image",imgErosion)
+cv2.waitKey(0)
+<-------------------------------------------------------------------------------------------------------------------->
+CHAPTER#03------------->#RESIZING AND CROPING
+
+import cv2
+
+img = cv2.imread("Resources/lambo.jpg")
+print(img.shape)
+imgResize = cv2.resize(img,(500,350))#in opencv first width come and then height
+imgCrop = img[100:500,200:400]
+
+cv2.imshow("Image",img)
+cv2.imshow("Resize Image",imgResize)
+cv2.imshow("Crop Image",imgCrop)
+cv2.waitKey(0)
+
+<---------------------------------------------------------------------------------------------------------------------->
+
+CHAPTER#04----->#Shapes and Text
+
+import cv2
+import numpy as np
+
+
+img = np.zeros((512,512,3),np.uint8)  #if we want to add color functionality we will have to give 3 channel
+print(img)
+#img[:]= 255,0,0   #to add the color in a whole created image
+img[100:300,200:300]= 255,0,0  #color in specific portion
+cv2.line(img,(0,0),(300,300),(0,255,0),3)  #it is use to put a line on image
+cv2.line(img,(0,0),(img.shape[1],img.shape[0]),(0,255,0),3)   #to put whole line on image
+cv2.rectangle(img,(0,0),(150,250),(0,0,255),2)  #rectangle  cv2.FILLED<--for filling the portion instead of thickness
+cv2.circle(img,(200,200),40,(255,255,0),5)  #cicles
+cv2.putText(img,"OPENCV LL",(300,200),cv2.FONT_HERSHEY_COMPLEX,1,(150,150,0),2)   #after FONT parameter here is a scale which means the according to the image
+cv2.imshow("Image",img)
+cv2.waitKey(0)
+
+CHAPTER#05---->#WRAP PRESPECTIVE
+import cv2
+import numpy as np
+
+width,height=250,350
+pts1=np.float32([[246,12],[255,100],[124,72],[162,156]])
+pts2=np.float32([[0,0],[width,0],[0,height],[width,height]])
+
+matrix=cv2.getPerspectiveTransform(pts1,pts2)
+imgOutput=cv2.warpPerspective(img,matrix,(width,height))
+
+
+
+cv2.imshow("Image",img)
+cv2.imshow("wrapImage",imgOutput)
+cv2.waitKey(0)
+
+<----------------------------------------------------------------------------------------------->
+CHAPTER#06------------>#JOINING iMAGES
+
+import cv2
+import numpy as np
+
+img = cv2.imread("Resources/lena.png")
+imgHor = np.hstack((img,img))  #add the pictures in horizontal format
+imgVer = np.vstack((img,img))
+cv2.imshow("Horizontal",imgHor)
+cv2.imshow("Veritcal",imgVer)
+
+#imgStack = stackImages([img,img,img],[img,img,img])
+
+#cv2.imshow("image",imgStack)
+cv2.waitKey(0)
+
+<---------------------------------------------------------------------------------------------->
+
+cHAPTER#07------->#COLOR DETECTION
+
+import cv2
+import numpy as np
+def empty(a):
+    pass
+
+
+
+
+#define some color value and ranges for its  saturation and hue
+#if the mage falls on that limit range we will grab them
+# we do not know what are particular color and ranges are using so for it bases we will be Using TrackBar
+# TrackBar helps to find the optimum minimum and maximum value  and detect it in the real time of our color
+
+cv2.namedWindow("TrackBars")
+cv2.resizeWindow("TrackBars",640,240)
+cv2.createTrackbar("hue min","TrackBars",49,179,empty)
+cv2.createTrackbar("hue max","TrackBars",131,179,empty)
+cv2.createTrackbar("sat min","TrackBars",92,255,empty)
+cv2.createTrackbar("sat max","TrackBars",225,255,empty)
+cv2.createTrackbar("val min","TrackBars",0,255,empty)
+cv2.createTrackbar("val max","TrackBars",204,255,empty)
+
+#this while is used to get the reading by scaling the Trackbar i order toget the value in console
+while True:
+    img = cv2.imread("Resources/lambo.jpg")
+    imgHSV = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+    h_min=cv2.getTrackbarPos("hue min","TrackBars")
+    h_max = cv2.getTrackbarPos("hue max", "TrackBars")
+    s_min = cv2.getTrackbarPos("sat min", "TrackBars")
+    s_max = cv2.getTrackbarPos("sat max", "TrackBars")
+    v_min = cv2.getTrackbarPos("val min", "TrackBars")
+    v_max = cv2.getTrackbarPos("val max", "TrackBars")
+    print(h_min,h_max,s_min,s_max,v_min,v_max)
+    #under this line the code is for matchingthe pixel from the original with the picture we created by Mask and giving the newly result
+    lower= np.array([h_min,s_min,v_min])
+    upper= np.array([h_max,s_max,v_max])
+    Mask = cv2.inRange(imgHSV,lower,upper)
+    imgResult= cv2.bitwise_and(img,img,mask=Mask)
+
+
+    cv2.imshow("Image",img)
+    cv2.imshow("HSV",imgHSV)
+    cv2.imshow("Mask",Mask)
+    cv2.imshow("result",imgResult)
+    cv2.waitKey(1)
+
