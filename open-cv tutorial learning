@@ -163,4 +163,50 @@ while True:
     cv2.imshow("Mask",Mask)
     cv2.imshow("result",imgResult)
     cv2.waitKey(1)
+<------------------------------------------------------------------------------------------------------------------------------------>
 
+CHAPTER#08--------------># CONTOURS / SHAPE DETECTION
+import cv2
+import numpy as np
+
+
+
+def getContours(img):    #This function is used for the detections of shapes within a image to detect  the shapes inside the image (working of Contour)
+    contours,hierarcy = cv2.findContours(img,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        print(area)
+        cv2.drawContours(imgContour,cnt,-1,(255,0,0),2)
+        if area>500:
+            cv2.drawContours(imgContour, cnt, -1, (255, 0, 0), 2)
+            peri = cv2.arcLength(cnt,True)
+            #print(peri)
+            approx = cv2.approxPolyDP(cnt,0.01*peri,True)  #approx is giving the thresholds value for pixel of shape w.r.t to it's edges
+            print(len(approx))
+            objCon = len(approx)
+            x, y, w, h = cv2.boundingRect(approx) #create a boundry outside the shape
+
+            if objCon ==3:objectType ="Tri"     #loop help to find the shapes with respect to object corners under the corner value 3 for tri, 4 for rectange, 8 fro circle
+            elif objCon ==4:
+                aspRatio = w/float(h)
+                if aspRatio >0.95 and aspRatio <1.05:objectType= "Sq"
+                else:objectType = "Rec"
+  
+            elif objCon ==8:objectType ="Cir"
+            else:objectType="NONE"
+            cv2.rectangle(imgContour,(x,y),(x+w,y+h),(0,255,0),2)
+            cv2.putText(imgContour,objectType,(x+(w//2)-10,y+(h//2)-10),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(0,15,255),1 )#use to put text inside the boundary created
+
+img = cv2.imread("Resources/shape.jpg")
+imgContour = img.copy()
+imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+imgBlur = cv2.GaussianBlur(imgGray, (7, 7), 1)
+imgCanny = cv2.Canny(imgBlur, 50, 50)
+getContours(imgCanny)
+cv2.imshow("Image",img)
+cv2.imshow("GrayImage",imgGray)
+cv2.imshow("BlurImage",imgBlur)
+cv2.imshow("CannyImage",imgCanny)
+cv2.imshow("ContourImage",imgContour)
+cv2.waitKey(0)
+<---------------------------------------------------------------------------------------------------------------------------------------------->
